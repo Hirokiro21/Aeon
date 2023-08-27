@@ -102,9 +102,9 @@ def gofile_dl(url: str):
         if data['status'] == 'ok' and data.get('data', {}).get('token', None):
             token = data['data']['token']
         else:
-            raise DirectDownloadLinkException(f'ERROR: Failed to Create GoFile Account')
+            raise DirectDownloadLinkException('ERROR: Failed to Create GoFile Account')
     else:
-        raise DirectDownloadLinkException(f'ERROR: GoFile Server Response Failed')
+        raise DirectDownloadLinkException('ERROR: GoFile Server Response Failed')
     headers = f'Cookie: accountToken={token}'
     def getNextedFolder(contentId, path):
         params = {'contentId': contentId, 'token': token, 'websiteToken': '7fd94ds12fds4'}
@@ -115,15 +115,16 @@ def gofile_dl(url: str):
                 links = {}
                 for content in json_data['data']['contents'].values():
                     if content["type"] == "folder":
-                        path = path+"/"+content['name']
+                        path = f"{path}/" + content['name']
                         links.update(getNextedFolder(content['id'], path))
                     elif content["type"] == "file":
                         links[content['link']] = path
                 return links
             else:
-                raise DirectDownloadLinkException(f'ERROR: Failed to Receive All Files List')
+                raise DirectDownloadLinkException('ERROR: Failed to Receive All Files List')
         else:
-            raise DirectDownloadLinkException(f'ERROR: GoFile Server Response Failed')
+            raise DirectDownloadLinkException('ERROR: GoFile Server Response Failed')
+
     return [getNextedFolder(url[url.rfind('/')+1:], ""), headers]
 
 
@@ -131,7 +132,7 @@ def nURL_resolver(url: str):
     cget = create_scraper().request
     resp = cget('GET', f"https://nurlresolver.netlify.app/.netlify/functions/server/resolve?q={url}&m=&r=false").json()
     if len(resp) == 0:
-        raise DirectDownloadLinkException(f'ERROR: Failed to extract Direct Link!')
+        raise DirectDownloadLinkException('ERROR: Failed to extract Direct Link!')
     headers = ""
     for header, value in (resp[0].get("headers", {})).items():
         headers = f"{header}: {value}"

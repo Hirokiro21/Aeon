@@ -5,8 +5,7 @@ from aiofiles.os import remove
 
 async def extract_links_from_text(text):
     pattern = r'(https?://\S+)'
-    links = re.findall(pattern, text)
-    return links
+    return re.findall(pattern, text)
 
 async def get_links_from_message(text, bulk_start, bulk_end):
     links_list = await extract_links_from_text(text)
